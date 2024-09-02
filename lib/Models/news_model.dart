@@ -1,4 +1,3 @@
-
 class News {
   final String status;
   final String copyright;
@@ -96,7 +95,9 @@ class Result {
     orgFacet: List<dynamic>.from(json["org_facet"].map((x) => x)),
     perFacet: List<dynamic>.from(json["per_facet"].map((x) => x)),
     geoFacet: List<dynamic>.from(json["geo_facet"].map((x) => x)),
-    multimedia: List<Multimedia>.from(json["multimedia"].map((x) => Multimedia.fromJson(x))),
+    multimedia: json["multimedia"] != null
+        ? List<Multimedia>.from(json["multimedia"].map((x) => Multimedia.fromJson(x)))
+        : [],
     shortUrl: json["short_url"],
   );
 
@@ -146,11 +147,11 @@ class Multimedia {
 
   factory Multimedia.fromJson(Map<String, dynamic> json) => Multimedia(
     url: json["url"],
-    format: formatValues.map[json["format"]]!,
+    format: formatValues.map[json["format"]] ?? Format.LARGE_THUMBNAIL,
     height: json["height"],
     width: json["width"],
-    type: typeValues.map[json["type"]]!,
-    subtype: subtypeValues.map[json["subtype"]]!,
+    type: typeValues.map[json["type"]] ?? Type.IMAGE,
+    subtype: subtypeValues.map[json["subtype"]] ?? Subtype.PHOTO,
     caption: json["caption"],
     copyright: json["copyright"],
   );

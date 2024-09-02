@@ -1,8 +1,12 @@
+import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:news_app/Cubit/news_cubit/news_cubit.dart';
+import 'package:news_app/Repository/news_repository.dart';
 import 'package:news_app/Screens/home_Screen.dart';
 
-void main(){
-runApp(MyApp());
+void main() {
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -10,13 +14,23 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        useMaterial3: true,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<NewsCubit>(
+          create: (context) => NewsCubit(NewsRepository()),
+        ),
+      ],
+      child: DevicePreview(
+        enabled: true,
+        builder: (context) => MaterialApp(
+          debugShowCheckedModeBanner: false,
+          useInheritedMediaQuery: true,  // Add this line
+          theme: ThemeData(
+            useMaterial3: true,
+          ),
+          home: const HomeScreen(),
+        ),
       ),
-    home: HomeScreen(),
     );
   }
 }
-

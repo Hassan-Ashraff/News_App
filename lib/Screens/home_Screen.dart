@@ -1,65 +1,96 @@
 import 'package:flutter/material.dart';
-import 'package:news_app/Models/home_model.dart';
-import 'package:news_app/Repository/home_repository.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:news_app/Cubit/news_cubit/news_cubit.dart';
+import 'package:news_app/Repository/news_repository.dart';
+import 'package:news_app/Screens/newsDetails_Screen.dart';
+
+
+
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  late Future<News> sportNews;
-  @override
-  void initState() {
-    super.initState();
-    sportNews = getNews();
-  }
 
+
+  @override
   Widget build(BuildContext context) {
+    double widthScreen = MediaQuery.sizeOf(context).width;
     return Scaffold(
       appBar: AppBar(
-        title: Text('News'),
+        title: const Text('Top News',
+          style: TextStyle(fontWeight: FontWeight.w700,
+              fontFamily: 'IBMPlexSans-Bold'
+         ),),
       ),
-      body: FutureBuilder<News>(
-          future: sportNews,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
+      body:
+      BlocProvider(
+        create: (context)=>NewsCubit(NewsRepository())..News(),
+        child:BlocBuilder<NewsCubit, NewsState>(
+          builder: (context, state) {
+            if (state is NewsLoading) {
               return const Center(child: CircularProgressIndicator());
-            } else {
-              return ListView.builder(
-                  itemCount: snapshot.data!.results.length,
-                  itemBuilder: (context, index) {
-                    final item = snapshot.data!.results[index];
-                    return ListTile(
+            } else if (state is NewsFailed) {
+              return const Center(child: Text('Error'));
+            } else if (state is NewsSucess) {
+
+
+               return
+
+              ListView.builder(
+                itemCount: state.news_res.results.length,
+                itemBuilder: (context, index) {
+                  final details_item = state.news_res;
+                  final item = state.news_res.results[index];
+                  final multimediaList = item.multimedia;
+                  final imageUrl = multimediaList.isNotEmpty && multimediaList[0].url != null
+                      ? multimediaList[0].url!
+                      : 'https://th.bing.com/th/id/OIP.GPKVlWlC6z0xDa-xzHcTVQHaFj?rs=1&pid=ImgDetMain';
+
+                  return InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => NewsdetailsScreen(itemOfResult: item,detailsItem: details_item,),
+                        ),
+                      );
+                    },
+                    child: ListTile(
                       trailing: Container(
-                        width: 60,
-                        height: 60,
+                        width: widthScreen*0.25,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
                           image: DecorationImage(
                             fit: BoxFit.cover,
-                            image: NetworkImage(
-                              item.multimedia[0].url ??
-                                  'https://th.bing.com/th/id/OIP.GPKVlWlC6z0xDa-xzHcTVQHaFj?rs=1&pid=ImgDetMain',
-                            ),
+                            image: NetworkImage(imageUrl),
                           ),
                         ),
                       ),
                       title: Text(
                         item.title ?? 'Not Found',
-                        style: TextStyle(
-                            color: Colors.black, fontWeight: FontWeight.w700),
+                        style:  TextStyle(fontFamily: 'IBMPlexSans-Bold',color: Colors.black, fontWeight: FontWeight.w700,fontSize: widthScreen*0.04),
                       ),
                       subtitle: Text(
                         item.createdDate.toString(),
-                        style: TextStyle(color: Colors.grey),
+                        style:  TextStyle(fontFamily: 'IBMPlexSans-Regular',color: Colors.grey,fontSize: widthScreen*0.035),
                       ),
-                    );
-                  });
+                    ),
+                  );
+                },
+              );
+
+            } else {
+              return const Center(child: Text('Unexpected Error'));
             }
-          }),
+          },
+        )
+      )
     );
   }
 }
