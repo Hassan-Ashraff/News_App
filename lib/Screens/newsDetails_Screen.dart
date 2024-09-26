@@ -110,7 +110,7 @@ class _NewsdetailsScreenState extends State<NewsdetailsScreen> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         SizedBox(
-                          width: widthScreen*0.17,
+                          width: widthScreen*0.25,
                           height: heightScreen*0.045,
                           child: DecoratedBox(
                             decoration: BoxDecoration(

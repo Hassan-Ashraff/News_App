@@ -21,11 +21,12 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: DevicePreview(
-        enabled: true,
+        enabled: false,
         builder: (context) => MaterialApp(
           debugShowCheckedModeBanner: false,
-          useInheritedMediaQuery: true,  // Add this line
+        //  useInheritedMediaQuery: true,  // Add this line
           theme: ThemeData(
+
             useMaterial3: true,
           ),
           home: const HomeScreen(),

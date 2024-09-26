@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:news_app/Cubit/news_cubit/news_cubit.dart';
 import 'package:news_app/Repository/news_repository.dart';
 import 'package:news_app/Screens/newsDetails_Screen.dart';
-
+import 'package:skeletonizer/skeletonizer.dart';
 
 
 
@@ -34,7 +34,33 @@ class _HomeScreenState extends State<HomeScreen> {
         child:BlocBuilder<NewsCubit, NewsState>(
           builder: (context, state) {
             if (state is NewsLoading) {
-              return const Center(child: CircularProgressIndicator());
+              return  Skeletonizer(
+                child: ListView.builder(
+                  itemCount: 10,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      trailing: Container(
+                        width: widthScreen*0.25,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          image: const DecorationImage(
+                            fit: BoxFit.cover,
+                            image: NetworkImage('https://th.bing.com/th/id/OIP.GPKVlWlC6z0xDa-xzHcTVQHaFj?rs=1&pid=ImgDetMain'),
+                          ),
+                        ),
+                      ),
+                      title: Text(
+                       'Demo Title',
+                        style:  TextStyle(fontFamily: 'IBMPlexSans-Bold',color: Colors.black, fontWeight: FontWeight.w700,fontSize: widthScreen*0.04),
+                      ),
+                      subtitle: Text(
+                        'Demo TitleDemo TitleDemo TitleDemo TitleDemo TitleDemo Title',
+                        style:  TextStyle(fontFamily: 'IBMPlexSans-Regular',color: Colors.grey,fontSize: widthScreen*0.035),
+                      ),
+                    );
+                  },
+                ),
+              );
             } else if (state is NewsFailed) {
               return const Center(child: Text('Error'));
             } else if (state is NewsSucess) {
